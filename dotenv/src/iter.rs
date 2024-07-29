@@ -3,14 +3,12 @@ use crate::{
     parse,
 };
 use std::{
-    collections::HashMap,
     env,
     io::{BufRead, BufReader, Read},
 };
 
 pub struct Iter<R> {
     lines: QuotedLines<BufReader<R>>,
-    substitution_data: HashMap<String, Option<String>>,
 }
 
 impl<R: Read> Iter<R> {
@@ -19,7 +17,6 @@ impl<R: Read> Iter<R> {
             lines: QuotedLines {
                 buf: BufReader::new(reader),
             },
-            substitution_data: HashMap::new(),
         }
     }
 
@@ -191,7 +188,7 @@ impl<R: Read> Iterator for Iter<R> {
                 None => return None,
             };
 
-            match parse::parse_line(&line, &mut self.substitution_data) {
+            match parse::parse_line(&line) {
                 Ok(Some(result)) => return Some(Ok(result)),
                 Ok(None) => {}
                 Err(err) => return Some(Err(err)),
